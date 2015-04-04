@@ -31,24 +31,7 @@ var APP = {
 			gArray=[],
 			dArray=[],
 			Tloader = new THREE.ImageLoader( manager ),
-			doorMt=new THREE.SpriteMaterial( { color: 0xffffff, fog: true } ),
 			touch={},
-			canvasArry={
-				"nz": $('<canvas width="512" height="512"></canvas>'),
-				"nx": $('<canvas width="512" height="512"></canvas>'),
-				"ny": $('<canvas width="512" height="512"></canvas>'),
-				"px": $('<canvas width="512" height="512"></canvas>'),
-				"py": $('<canvas width="512" height="512"></canvas>'),
-				"pz": $('<canvas width="512" height="512"></canvas>')
-			},
-			contexts={
-				"nz": canvasArry.nz[0].getContext("2d"),
-				"nx": canvasArry.nx[0].getContext("2d"),
-				"ny": canvasArry.ny[0].getContext("2d"),
-				"px": canvasArry.px[0].getContext("2d"),
-				"py": canvasArry.py[0].getContext("2d"),
-				"pz": canvasArry.pz[0].getContext("2d")
-			},
 			textureArry={
 				"nz": $('<canvas width="512" height="512"></canvas>'),
 				"nx": $('<canvas width="512" height="512"></canvas>'),
@@ -75,6 +58,7 @@ var APP = {
 			phi = 0, theta = 0,
 			pSize = 40,pState=0,
 			pArray=[],
+			dpArray=[],
 			target = new THREE.Vector3(),
 			container = document.getElementById( "container" );
 			pic={};
@@ -124,62 +108,14 @@ var APP = {
 			}
 		}
 		
-		this.setCannel=function(json){
-			for(var channel in json){
-				var img=new Image();
-				img.name=channel
-			function loadFunction(){
-				contexts[this.name].drawImage(this,0,0,512,512)
-			}
-			img.addEventListener("load",loadFunction,false);
-			
-			img.src=json[channel]
-				}
-	}	
-		this.chooseColor=function(color){debugger;}
+		this.chooseObj=function(color){debugger;}
 		this.setGood=function(array){
 			gArray=array;
 		}
 		this.setDoor=function(array){
 			dArray=array;
 		}
-		function findColor(name,point){
-			console.log(name)
-			console.log(point)
-			var colorContext=contexts[name];
-			var colorX=0;
-			var colorY=0;
-			function three2two(num){
-				return parseInt(((num-427.62860107421875)/(427.62860107421875*2))*512)*(-1)
-				}
-			if(name=="py"){
-				colorX=three2two(point.z);
-				colorY=three2two(-point.x);
-				}
-			if(name=="nx"){
-				colorX=three2two(point.x);
-				colorY=three2two(point.y);
-				}
-			if(name=="nz"){
-				colorX=three2two(-point.z);
-				colorY=three2two(point.y);
-				}
-			if(name=="px"){
-				colorX=three2two(-point.x);
-				colorY=three2two(point.y);
-				}
-			if(name=="pz"){
-				colorX=three2two(point.z);
-				colorY=three2two(point.y);
-				}
-			if(name=="ny"){
-				colorX=three2two(point.z);
-				colorY=three2two(point.x);
-				}
-			var colorReturn=colorContext.getImageData(colorX, colorY, 1, 1);
-			//heightLight(name,colorReturn.data)
-			scope.chooseColor("#"+colorReturn.data[0]+"#"+colorReturn.data[1]+"#"+colorReturn.data[2])
-			}
+
 		this.load = function (  ) {
 
 		var	json={
@@ -437,7 +373,6 @@ var APP = {
 			var goodMt=new THREE.SpriteMaterial( { map:goodT,color: 0xffffff, fog: true } )
 			var Tloader = new THREE.ImageLoader( );
 				Tloader.load( "texture/goodPoint.png", function ( image ) {
-
 					goodT.image = image;
 					goodT.needsUpdate = true;
 
@@ -446,15 +381,48 @@ var APP = {
 										particle.position.x = n.point.x * 0.96;
 										particle.position.y = n.point.y * 0.96;
 										particle.position.z = n.point.z * 0.96;
-										//particle.position.copy( n.point );
 										particle.scale.x = particle.scale.y = 40;
+										particle.ptype="goods";
+										particle.data=n.data;
 										pArray.push(particle)
 										scene.add( particle );
 								})
+
 				} );
-			
-			//this.setCamera( loader.parse( json.camera ) );
+				Tloader.load( "texture/door.png", function ( image ) {
+					var sourceM = $('<canvas width="228" height="228"></canvas>');
+					var sourceCN = sourceM[0].getContext("2d");
+					sourceCN.drawImage(image,0,0);
+					$.each(dArray,function(i,n){
+						var doorM = $('<canvas width="228" height="228"></canvas>');
+						var doorCn = doorM[0].getContext("2d");
+						doorCn.putImageData(sourceCN.getImageData(0,0,228,228),0,0);
+						doorCn.font="40px 黑体";
+						doorCn.fillStyle="#ffffff";
+						doorCn.fillText(n.data.dsc,30,50);
+						var lastM=doorM[0].toDataURL();
+						Tloader.load( lastM, function ( imageL ) {
+							var doorT=new THREE.Texture();
+							doorT.image=imageL;
+							doorT.needsUpdate = true;
+						var doorMt=new THREE.SpriteMaterial( { map:doorT,color: 0xffffff, fog: true } );
+						var particle = new THREE.Sprite( doorMt );
+										particle.position.x = n.point.x * 0.75;
+										particle.position.z = n.point.z * 0.75;
+										particle.scale.x = particle.scale.y = 200;
+										particle.ptype="doors";
+										particle.data=n.data;
+										dpArray.push(particle)
+										scene.add( particle );
+						})
+							
+						
+					})
+				})
+			doorMt=new THREE.SpriteMaterial( { color: 0xffffff, fog: true } ),
+
 			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
+
 			events = {
 				keydown: [],
 				keyup: [],
@@ -463,7 +431,6 @@ var APP = {
 					event.stopPropagation();
 					event.preventDefault();
 					touch.time=new Date().getTime();
-					touch.name="";
 					touch.point={};
 					mouse.x = ( event.clientX / renderer.domElement.width ) * 2 - 1;
 					mouse.y = - ( event.clientY / renderer.domElement.height ) * 2 + 1;
@@ -472,8 +439,7 @@ var APP = {
 	
 					var intersects = raycaster.intersectObjects( scene.children );
 					if ( intersects.length > 0 ) {
-						touch.name=intersects[ 0 ].object.name;
-						touch.point=intersects[ 0 ].point
+						touch.point=intersects[ 0 ].object
 						console.log(intersects[ 0 ].point)
 					}
 			
@@ -501,7 +467,10 @@ var APP = {
 				isUserInteracting = false;
 				var endTime = new Date().getTime();
 						if((endTime-touch.time)<300){
-							findColor(touch.name,touch.point)
+							if(touch.point.ptype){
+								scope.chooseObj(touch.point.ptype,touch.point.data)
+							}
+							
 							}
 						}
 				],
@@ -535,9 +504,7 @@ var APP = {
 	
 					var intersects = raycaster.intersectObjects( scene.children );
 					if ( intersects.length > 0 ) {
-						touch.name=intersects[ 0 ].object.name;
-						console.log(intersects[ 0 ].object)
-						touch.point=intersects[ 0 ].point
+						touch.point=intersects[ 0 ].object
 					}
 			
 				},function(event){
@@ -559,7 +526,9 @@ var APP = {
 					function(event){
 						var endTime = new Date().getTime();
 						if((endTime-touch.time)<300){
-							findColor(touch.name,touch.point)
+							if(touch.point.ptype){
+								scope.chooseObj(touch.point.ptype,touch.point.data)
+							}
 							}
 						}
 				],
@@ -604,25 +573,58 @@ var APP = {
 						camera.position.copy( target ).negate();
 				
 						camera.lookAt( target );
-						if(pState==0){
-							if(pSize == 40){
-								pState=1;
-								pSize-=0.5;
-							}else{
-								pSize+=0.5
-							}
-						}else{
-							if(pSize == 30){
-								pState=0;
-								pSize+=0.5;
-							}else{
-								pSize-=0.5;
-							}
-						}
-						$.each(pArray,function(i,n){
-							n.scale.x=n.scale.y=pSize
-						})
 						
+						
+						},function(){
+							var sourcePoint=camera.position
+							$.each(dpArray,function(i,n){
+								var targetPoint=n.position
+								var xd = Math.pow(targetPoint.x-sourcePoint.x,2);
+								var yd = Math.pow(targetPoint.y-sourcePoint.y,2);
+								var zd = Math.pow(targetPoint.z-sourcePoint.z,2);
+								var pd = Math.sqrt(xd + yd + zd);
+								if(pd<0){
+									pd=pd*(-1)
+								}
+								if(pd<600){
+									n.visible=false;
+								}else{
+									n.visible=true;
+								}
+							})
+						},function(){
+							if(pState==0){
+								if(pSize == 40){
+									pState=1;
+									pSize-=0.5;
+								}else{
+									pSize+=0.5
+								}
+							}else{
+								if(pSize == 30){
+									pState=0;
+									pSize+=0.5;
+								}else{
+									pSize-=0.5;
+								}
+							}
+							var sourcePoint=camera.position
+							$.each(pArray,function(i,n){
+								n.scale.x=n.scale.y=pSize;
+								var targetPoint=n.position;
+								var xd = Math.pow(targetPoint.x-sourcePoint.x,2);
+								var yd = Math.pow(targetPoint.y-sourcePoint.y,2);
+								var zd = Math.pow(targetPoint.z-sourcePoint.z,2);
+								var pd = Math.sqrt(xd + yd + zd);
+								if(pd<0){
+									pd=pd*(-1)
+								}
+								if(pd<500){
+									n.visible=false;
+								}else{
+									n.visible=true;
+								}
+							})
 						}
 				]
 			};
@@ -633,14 +635,6 @@ var APP = {
 			$.each(scene.children,function(i,n){
 				n.material=pic[n.name];
 			})
-		};
-
-		this.setCamera = function ( value ) {
-
-			camera = value;
-			camera.aspect = this.width / this.height;
-			camera.updateProjectionMatrix();
-
 		};
 
 		this.setScene = function ( value ) {

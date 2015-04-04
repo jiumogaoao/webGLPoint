@@ -45,63 +45,117 @@
         <div id="message">请点击</div>
 		<script>
 
-
-			/*空间贴图,热区*/	
-			var textureGroup = {
-					"#255#255#255" : {
-						texture : [/*[展示层,id通道层],px右,nx左,py上,ny下,pz前,nz后*/
-							{"px":"texture/kj01/px.png","nx":"texture/kj01/nx.png","py":"texture/kj01/py.png","ny":"texture/kj01/ny.png","pz":"texture/kj01/pz.png","nz":"texture/kj01/nz.png"},
-							{"px":"texture/kj01/pxa.gif","nx":"texture/kj01/nxa.gif","py":"texture/kj01/pya.gif","ny":"texture/kj01/nya.gif","pz":"texture/kj01/pza.gif","nz":"texture/kj01/nza.gif"}
-						],
-						data : {}/*返回后台的数据*/
-					},
-                    "#255#0#0" : {
-                        texture : [/*[展示层,id通道层],px右,nx左,py上,ny下,pz前,nz后*/
-                            {"px":"texture/skybox/px.gif","nx":"texture/skybox/nx.gif","py":"texture/skybox/py.gif","ny":"texture/skybox/ny.gif","pz":"texture/skybox/pz.gif","nz":"texture/skybox/nz.gif"},
-                            {"px":"texture/skybox/px.gif","nx":"texture/skybox/nx.gif","py":"texture/skybox/py.gif","ny":"texture/skybox/ny.gif","pz":"texture/skybox/pz.gif","nz":"texture/skybox/nz.gif"}
-                        ],
-                        data : {}/*返回后台的数据*/
-                    }
-				};
-            /*描述,标签*/
-			var descriptionGroup = {
-					"#255#255#255" : {
-						description : "描述",/*出现的标签*/
-						data : {}/*返回后台的数据*/
-					}
-				};
-
-				var goodList=[
-						{point:{x: -200.56300883256966, y: -76.66965565818798, z: 420.1404880117886},data:{}},
-						{point:{x: 81.63459390029882, y: -126.40033552924488, z: 443.30080686911344},data:{}},
-						{point:{x: -370.660394312097, y: -160.67730064703366, z: -254.43001454289342},data:{}},
-						{point:{x: -169.90934411743535, y: -11.92037043932796, z: -438.1573007551731},data:{}},
-						{point:{x: 60.80377597745132, y: -196.01679968906228, z: -423.9461366647258},data:{}},
-						{point:{x: 91.13270078593774, y: 93.44576436643337, z: -451.2550343463956},data:{}},
-						{point:{x: 376.0193430078179, y: 48.8449358029046, z: -285.71227085539044},data:{}},
-						{point:{x: 25.936856483965812, y: 144.18211175559406, z: 443.62403075977363},data:{}}
+			var returnData={
+				"201":{/*px右,nx左,py上,ny下,pz前,nz后*/
+					texture:{"px":"texture/kj01/px.png","nx":"texture/kj01/nx.png","py":"texture/kj01/py.png","ny":"texture/kj01/ny.png","pz":"texture/kj01/pz.png","nz":"texture/kj01/nz.png"},
+					goods:[
+						{point:{x: -200.56300883256966, y: -76.66965565818798, z: 420.1404880117886},data:{
+							id:"001",
+							name:"001",
+							images:"http://",
+							price:"10086",
+							size:"100*100*100"
+						}},
+						{point:{x: 81.63459390029882, y: -126.40033552924488, z: 443.30080686911344},data:{
+							id:"002",
+							name:"002",
+							images:"http://",
+							price:"10086",
+							size:"100*100*100"
+						}},
+						{point:{x: -370.660394312097, y: -160.67730064703366, z: -254.43001454289342},data:{
+							id:"003",
+							name:"003",
+							images:"http://",
+							price:"10086",
+							size:"100*100*100"
+						}},
+						{point:{x: -169.90934411743535, y: -11.92037043932796, z: -438.1573007551731},data:{
+							id:"004",
+							name:"004",
+							images:"http://",
+							price:"10086",
+							size:"100*100*100"
+						}},
+						{point:{x: 60.80377597745132, y: -196.01679968906228, z: -423.9461366647258},data:{
+							id:"005",
+							name:"005",
+							images:"http://",
+							price:"10086",
+							size:"100*100*100"
+						}},
+						{point:{x: 91.13270078593774, y: 93.44576436643337, z: -451.2550343463956},data:{
+							id:"006",
+							name:"006",
+							images:"http://",
+							price:"10086",
+							size:"100*100*100"
+						}},
+						{point:{x: 376.0193430078179, y: 48.8449358029046, z: -285.71227085539044},data:{
+							id:"007",
+							name:"007",
+							images:"http://",
+							price:"10086",
+							size:"100*100*100"
+						}},
+						{point:{x: 25.936856483965812, y: 144.18211175559406, z: 443.62403075977363},data:{
+							id:"008",
+							name:"008",
+							images:"http://",
+							price:"10086",
+							size:"100*100*100"
+						}}
+					],
+					doors:[
+						{point:{x: 454.87221682494066, y: -94.10262148778672, z: 48.71421530133978},data:{
+							dsc:"进入客厅",
+							targetId:"202"
+						}},
+						{point:{x: -459.09653972617224, y: -56.83606557561109, z: 36.61813567101939},data:{
+							dsc:"进入房间",
+							targetId:"003"
+						}}
+						]	
+				},
+				"202":{
+					texture:{"px":"texture/02/px.jpg","nx":"texture/02/nx.jpg","py":"texture/02/py.jpg","ny":"texture/02/ny.jpg","pz":"texture/02/pz.jpg","nz":"texture/02/nz.jpg"},
+					goods:[
+						{point:{x: 25.936856483965812, y: 144.18211175559406, z: 443.62403075977363},data:{
+							id:"009",
+							name:"009",
+							images:"http://",
+							price:"10086",
+							size:"100*100*100"
+						}}
+					],
+					doors:[
+						{point:{x: 461.13673291248847, y: -6.905943708650884, z: 62.98570010535518},data:{
+							dsc:"返回大厅",
+							targetId:"201"
+						}}
 					]
-				var doorList=[{point:{x: 454.87221682494066, y: -94.10262148778672, z: 48.71421530133978},data:{}}]	
+				}
+			}
+
 
 				var player = new APP.Player();
 				
-				function appReload(color){
-					player.reload(color.texture[0]);
-					player.setCannel(color.texture[1]);
-					player.setGood(goodList);
-					player.setDoor(doorList);
+				function appReload(id){
+					player.reload(returnData[id].texture);
+					player.setGood(returnData[id].goods);
+					player.setDoor(returnData[id].doors);
 					}
 				
-				player.chooseColor=function(color){
-				$("#message").html(color)
-					if(textureGroup[color]){
+				player.chooseObj=function(type,data){
+				$("#message").html(data.name || data.dsc)
+					if(type=="doors"){
 						$("#container").empty();
-						appReload(textureGroup[color])
+						appReload(data.targetId)
 						player.load();
 				player.setSize( window.innerWidth, window.innerHeight );
 						}
 					}
-				player.chooseColor("#255#255#255")
+				player.chooseObj("doors",{"targetId":"201"})
 				
 				player.play();
 
